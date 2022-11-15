@@ -1,19 +1,33 @@
-import * as React from 'react';
-import LaunchList from './components/LaunchList';
-import LaunchProfile from './components/LaunchProfile';
-
+import React, { useState } from 'react';
 import './App.css';
+import IssueList from './components/IssueList/IssueList';
+import IssueView from './components/IssueView/IssueView';
+import { Typography, Container, makeStyles } from '@material-ui/core';
+
+import client from './apollo-client/client';
+import { ApolloProvider } from '@apollo/react-hooks';
+import SearchBar from './components/SearchBar/SearchBar';
 
 const App = () => {
-  const [id, setId] = React.useState(42);
-  const handleIdChange = React.useCallback((newId: any) => {
-    setId(newId);
-  }, []);
+  const useStyles = makeStyles({
+    title: {
+      marginTop: '1rem',
+      marginBottom: '1rem',
+      textAlign: 'center',
+    },
+  });
+  const classes = useStyles();
+  const [searchTerm, setSearchTerm] = useState('');
   return (
-    <div className="App">
-      <LaunchList handleIdChange={handleIdChange} />
-      <LaunchProfile id={id} />
-    </div>
+    <ApolloProvider client={client}>
+      <Container maxWidth={'sm'}>
+        <Typography variant={'h3'} className={classes.title}>
+          GraphQL Github Client
+        </Typography>
+        <SearchBar value={searchTerm} onChange={setSearchTerm} />
+        <IssueList searchTerm={searchTerm} />
+      </Container>
+    </ApolloProvider>
   );
 };
 
